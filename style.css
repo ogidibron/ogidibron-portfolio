@@ -307,7 +307,7 @@ body.hovering #c-ring {
   object-fit: cover;
   object-position: center top;
   display: block;
-  opacity: 0.18;
+  opacity: 0.9;
   filter: grayscale(60%) contrast(1.1);
 }
 .hero-photo-layer .ph-img {
