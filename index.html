@@ -7,6 +7,19 @@
   <meta name="author" content="Gideon Tetteh Luotey" />
   <title>Gideon Tetteh Luotey</title>
 
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:title" content="Gideon Tetteh Luotey — Portfolio" />
+  <meta property="og:description" content="Web Developer, Data Scientist, AI Engineer, Graphic Designer & Video Editor based in Ghana." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gideonluotey.com" />
+  <meta property="og:image" content="https://gideonluotey.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon (replace with your actual favicon files) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,10 +32,6 @@
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
 
-  <!-- ── Custom Cursor ── -->
-  <div id="c-dot"  aria-hidden="true"></div>
-  <div id="c-ring" aria-hidden="true"></div>
-
   <!-- ══════════════════════════════════════════════════════
        QUOTE SPLASH
   ══════════════════════════════════════════════════════════ -->
@@ -33,6 +42,9 @@
       <div class="splash-rule" aria-hidden="true"></div>
       <p class="splash-attr" id="splash-attr"></p>
     </div>
+    <button class="splash-skip" aria-label="Skip quote and enter site">
+      Enter Site <span aria-hidden="true">→</span>
+    </button>
     <div class="splash-bar" aria-hidden="true"></div>
   </div>
 
@@ -97,7 +109,7 @@
       <!-- Use a full-body editorial/lifestyle photo, not a passport shot.   -->
       <!-- The image renders as a blended cinematic background layer.        -->
       <div class="hero-photo-layer" aria-hidden="true">
-        <img src="image.png" alt="Gideon's profile photo"/>
+        <img src="image.png" alt="" loading="lazy" />
        <!---- <div class="ph-img" >
           <svg viewBox="0 0 200 320" fill="none" xmlns="http://www.w3.org/2000/svg">
             <ellipse cx="100" cy="85" rx="42" ry="48" fill="rgba(201,168,76,0.15)" />
@@ -135,11 +147,7 @@
         </div>
       </div>
 
-      <div class="scroll-cue" aria-hidden="true">
-        <div class="scroll-line"></div>
-        <span class="scroll-label">Scroll</span>
-      </div>
-    </section>
+      </section>
 
     <!-- ════════════════════ ABOUT ════════════════════ -->
     <section id="about" class="section section-alt" aria-labelledby="about-h">
@@ -177,8 +185,8 @@
             magical to those who use it. Whether architecting a neural network, designing a
             brand identity, or producing a cinematic video, that philosophy remains unchanged.
           </p>
-          <a href="#contact" class="btn-gold" style="margin-top: 1.4rem; display: inline-block;">
-            Let's Tuild The Unmaginable Tech Adventures Together
+          <a href="#contact" class="btn-gold btn-gold--about">
+            Let's Build The Unimaginable Together
           </a>
         </div>
 
@@ -455,7 +463,7 @@
             <ul class="exp-list">
               <li>Deliver end-to-end digital solutions for clients across Africa, Europe, North America and the entire world spanning web development, AI integration, and brand design.</li>
               <li>Built and launched 10+ production-grade web applications generating substantial combined client revenue.</li>
-              <li>Developed and deployed machine learning models practically as a side project forcing on data and it usage</li>
+              <li>Developed and deployed machine learning models as practical side projects, focusing on real-world data applications</li>
               <li>Produced visual brand identities and video campaigns for 15+ brands across multiple industries.</li>
               <li>Architected custom AI pipelines using large language models for enterprise automation workflows.</li>
             </ul>
@@ -648,11 +656,11 @@
             I want to hear from you.
           </p>
           <nav class="ch-list" aria-label="Contact channels">
-            <a href="mailto:ogidibron@example.com" class="ch-item">
+            <a href="mailto:hello@gideonluotey.com" class="ch-item">
               <span class="ch-icon" aria-hidden="true">✉</span>
               <span>
                 <span class="ch-lbl">Email</span>
-                <span class="ch-val">ogidibron@example.com</span>
+                <span class="ch-val">hello@gideonluotey.com</span>
               </span>
             </a>
             <a href="https://www.linkedin.com/in/gideon-tetteh-luotey-780b95349?utm_source=share_via&utm_content=profile&utm_medium=member_ios" class="ch-item" rel="noopener" target="_blank">
@@ -669,11 +677,11 @@
                 <span class="ch-val">github.com/ogidibron</span>
               </span>
             </a>
-            <a href="https://x.com/utd_mayor_?s=21" class="ch-item" rel="noopener" target="_blank">
+            <a href="https://x.com/ogidibron" class="ch-item" rel="noopener" target="_blank">
               <span class="ch-icon" aria-hidden="true">𝕏</span>
               <span>
                 <span class="ch-lbl">X / Twitter</span>
-                <span class="ch-val">@UTD MAYOR</span>
+                <span class="ch-val">@ogidibron</span>
               </span>
             </a>
           </nav>

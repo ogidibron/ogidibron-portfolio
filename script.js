@@ -57,35 +57,6 @@ function dismissSplash() {
   document.getElementById('splash').addEventListener('click', dismissSplash);
 })();
 
-/* ─── CUSTOM CURSOR ──────────────────────────────────────── */
-const cdot  = document.getElementById('c-dot');
-const cring = document.getElementById('c-ring');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX;
-  my = e.clientY;
-});
-
-(function tickCursor() {
-  cdot.style.left = mx + 'px';
-  cdot.style.top  = my + 'px';
-
-  rx += (mx - rx) * 0.14;
-  ry += (my - ry) * 0.14;
-  cring.style.left = rx + 'px';
-  cring.style.top  = ry + 'px';
-
-  requestAnimationFrame(tickCursor);
-})();
-
-/* Expand cursor ring on interactive elements */
-const HOVERABLES = 'a, button, .proj-card, .srv-card, .skill-col, .blog-card, .exp-tab, .filter-btn, .ch-item';
-document.querySelectorAll(HOVERABLES).forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-});
-
 /* ─── NAV: SOLID ON SCROLL ───────────────────────────────── */
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
@@ -174,10 +145,20 @@ function filterProj(cat, btn) {
   });
   btn.setAttribute('aria-pressed', 'true');
 
-  // Show / hide cards
-  document.querySelectorAll('.proj-card').forEach(card => {
+  // Show / hide cards with animation
+  const cards = document.querySelectorAll('.proj-card');
+  cards.forEach((card, i) => {
     const show = cat === 'all' || card.dataset.cat === cat;
-    card.style.display = show ? '' : 'none';
+    if (show) {
+      card.classList.remove('hidden');
+      card.classList.add('entering');
+      card.style.animationDelay = (i * 0.06) + 's';
+      // Clean up animation class after it completes
+      setTimeout(() => card.classList.remove('entering'), 600);
+    } else {
+      card.classList.add('hidden');
+      card.classList.remove('entering');
+    }
   });
 }
 
@@ -185,20 +166,64 @@ function filterProj(cat, btn) {
 function handleForm(e) {
   e.preventDefault();
   const btn = document.getElementById('fsub-btn');
+  const form = e.target;
   const originalText = btn.textContent;
 
-  btn.textContent = 'Sent ✓';
-  btn.style.background = 'var(--crimson)';
-  btn.style.color = '#fff';
-  btn.disabled = true;
+  // Basic validation
+  const fname = form.querySelector('#f-fname').value.trim();
+  const email = form.querySelector('#f-email').value.trim();
+  const msg = form.querySelector('#f-msg').value.trim();
 
+  if (!fname || !email || !msg) {
+    // Highlight empty required fields
+    ['f-fname', 'f-email', 'f-msg'].forEach(id => {
+      const el = form.querySelector('#' + id);
+      if (!el.value.trim()) {
+        el.style.borderColor = 'var(--fire)';
+        setTimeout(() => { el.style.borderColor = ''; }, 2000);
+      }
+    });
+    return;
+  }
+
+  // Email format check
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    const emailEl = form.querySelector('#f-email');
+    emailEl.style.borderColor = 'var(--fire)';
+    setTimeout(() => { emailEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+
+  // Loading state
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  // Simulate network request (replace with real fetch in production)
   setTimeout(() => {
-    btn.textContent = originalText;
-    btn.style.background = '';
-    btn.style.color = '';
-    btn.disabled = false;
-    e.target.reset();
-  }, 3500);
+    // Simulate success (90% chance) or error (10% chance)
+    const isSuccess = Math.random() > 0.1;
+
+    if (isSuccess) {
+      btn.textContent = 'Message Sent ✓';
+      btn.classList.remove('loading');
+      btn.classList.add('success');
+    } else {
+      btn.textContent = 'Failed to send. Try again.';
+      btn.classList.remove('loading');
+      btn.classList.add('error');
+      btn.disabled = false;
+      return;
+    }
+
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.classList.remove('success', 'error');
+      btn.disabled = false;
+      form.reset();
+    }, 3500);
+  }, 1500);
 }
 
 /* ─── ACTIVE NAV LINK ON SCROLL ──────────────────────────── */
