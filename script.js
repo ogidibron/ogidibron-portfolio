@@ -95,19 +95,6 @@ const revealObserver = new IntersectionObserver(entries => {
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-/* ─── SKILL BARS: ANIMATE ON ENTRY ──────────────────────── */
-const barObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    entry.target.querySelectorAll('.bar-fill').forEach(bar => {
-      bar.style.width = bar.dataset.w + '%';
-    });
-    barObserver.unobserve(entry.target);
-  });
-}, { threshold: 0.3 });
-
-document.querySelectorAll('.skill-col').forEach(col => barObserver.observe(col));
-
 /* ─── EXPERIENCE TABS ────────────────────────────────────── */
 function showExp(idx, el) {
   document.querySelectorAll('.exp-tab').forEach((tab, i) => {
