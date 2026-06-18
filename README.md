@@ -2,9 +2,9 @@
 
 A professional, interactive, and fully responsive personal portfolio website built with
 pure **HTML5**, **CSS3**, and **vanilla JavaScript**. No frameworks, no build tools, no
-dependencies. Dark & elegant luxury aesthetic with a crimson-gold colour palette.
+dependencies. Light, vibrant aesthetic with a modern indigo-violet-cyan palette and dark mode toggle.
 
-> **Status:** Production-ready · v1.3.0 · © 2026 Gideon Tetteh Luotey
+> **Status:** Production-ready · v2.0.0 · © 2026 Gideon Tetteh Luotey
 
 ---
 
@@ -59,43 +59,47 @@ portfolio/
 - Full-screen quote splash displays on every page load
 - A pool of **16 hard-hitting inspirational quotes** — a different one appears
   each visit, guaranteed by `localStorage` (no back-to-back repeats)
-- Auto-dismisses after **4 seconds** with an animated gold progress bar countdown
+- Auto-dismisses after **4 seconds** with an animated progress bar countdown
 - Clicking anywhere or pressing any key also dismisses it immediately
 
 ### Navigation
-- Fixed top bar with scroll-triggered **frosted-glass effect**
+- Fixed top bar with scroll-triggered background change
 - Active section auto-highlighted via `aria-current` as the user scrolls
 - Fully responsive — collapses into a full-screen animated mobile overlay on
   screens ≤ 960px wide
 - `Escape` key closes the mobile menu; body scroll is locked while it is open
+- **Dark mode toggle** (🌙/☀️) with localStorage persistence
 
 ### Hero Section
-- Your photo renders as a **full-bleed cinematic background layer** —
-  atmospheric, blended with dual gradient vignettes, not a passport/headshot style
-- Crimson atmospheric glow adds depth on the right side of the screen
-- Role descriptor line: *Engineer · Designer · Data Scientist · AI Engineer · Storyteller*
+- **Large circular profile photo** with animated gradient ring
+- **Subtle gradient background** with soft red/blue glows
+- **Particle animation** with colorful dots floating in the background via `<canvas>`
+- Role descriptor line: *Full-Stack Developer · Data Scientist · AI Engineer · Designer*
 
 ### Sections
 
 | Section    | Description |
 |------------|-------------|
-| About      | Two-column biography, pull-quote, and personal detail cards |
-| Skills     | Three-column grid with scroll-triggered animated progress bars |
-| Projects   | Filterable 3-column grid — All / Development / AI & Data / Design |
-| Experience | Tabbed timeline — click or use ↑ ↓ arrow keys to navigate |
-| Services   | Four service cards with full deliverable lists |
-| Articles   | Editorial blog layout — one featured card plus side articles |
-| Contact    | Channel links + fully accessible contact form with submit feedback |
+| About      | Two-column biography and call-to-action |
+| Skills     | Filterable skill cards with category tabs (All / Development / AI & Data / Design) |
+| Projects   | Card grid — 6 project cards with category tags and hover effects |
+| Experience | Vertical timeline — 4 career entries with dates, titles, and achievements |
+| Services   | Four service cards with icon animations and hover lift effects |
+| Articles   | Editorial blog grid — featured card plus side articles |
+| Contact    | Channel links + fully accessible contact form with validation and submit feedback |
 
 ### Design Details
-- Custom animated cursor — gold dot + lagging ring, expands on hover over interactives
-- Subtle film-grain texture overlay across the entire site
-- Cormorant Garamond for editorial headings, Syne for labels, DM Sans for body copy
-- Diamond **GTL monogram** logo with double-border inner detail
+- **Light, vibrant color palette** with indigo, violet, cyan, and amber accents
+- **Large circular profile photo** with animated gradient ring
+- **Vibrant geometric background** with floating shapes and particle animation
+- Inter font family for clean, modern typography
+- **GTL monogram** logo in header and footer
 - Scroll-reveal animations (`IntersectionObserver`) on all major elements
-- Crimson-to-gold gradient on skill bars and project card hover lines
-- Footer: centred column layout — GTL gem → socials → rule → copyright → back-to-top
+- **Interactive skills section** with category filtering via JavaScript event binding
+- Responsive design for all screen sizes
 - Dynamic copyright year — never needs manual updating
+
+> **v2 Redesign Note:** This portfolio was rebuilt from the ground up in v2 with a light/vibrant theme, dark mode toggle, particle canvas background, modern card and timeline layouts, and clean JavaScript event binding. The old dark luxury crimson-gold palette, custom cursor, tabbed experience panels, and animated skill progress bars have been replaced with a fresh, energetic design system.
 
 ---
 
@@ -139,41 +143,39 @@ python -m http.server 8000
 Find this block in `index.html` inside the `#hero` section:
 
 ```html
-<div class="hero-photo-layer" aria-hidden="true">
-  <div class="ph-img">
-    <!-- SVG silhouette placeholder -->
-  </div>
+<div class="hero-photo">
+  <div class="hero-photo-ring" aria-hidden="true"></div>
+  <img src="your-photo.jpg" alt="Your name" />
 </div>
 ```
 
-Replace the inner `<div class="ph-img">…</div>` with your actual image:
+Replace the `src` with your actual image path:
 
 ```html
-<div class="hero-photo-layer" aria-hidden="true">
-  <img src="your-photo.jpg" alt="" />
+<div class="hero-photo">
+  <div class="hero-photo-ring" aria-hidden="true"></div>
+  <img src="your-photo.jpg" alt="Your name" />
 </div>
 ```
 
 For best results with WebP (recommended format):
 
 ```html
-<div class="hero-photo-layer" aria-hidden="true">
+<div class="hero-photo">
+  <div class="hero-photo-ring" aria-hidden="true"></div>
   <picture>
     <source srcset="your-photo.webp" type="image/webp" />
-    <img src="your-photo.jpg" alt="" />
+    <img src="your-photo.jpg" alt="Your name" />
   </picture>
 </div>
 ```
 
 **Photo tips:**
-- Use a **full-body or three-quarter editorial/lifestyle shot** — not a headshot
-- Portrait orientation (taller than wide) fills the hero best
-- Minimum resolution: **1200px tall**
+- Use a **circular or portrait-oriented photo** — the CSS applies a circular clip
+- Minimum resolution: **400px** square
 - Target file size: **under 300 KB** after compression
-- The CSS automatically applies `opacity: 0.18`, `grayscale(60%)`, `contrast(1.1)`,
-  and two gradient vignettes — so the image blends cinematically into the background
-- A lighter, more colourful photo will look more dramatic; a dark photo may be
-  too subtle — adjust `opacity` in `style.css` under `.hero-photo-layer img` if needed
+- The CSS automatically applies a gradient ring around the photo and subtle shadow
+- A lighter, more colourful photo will look more vibrant against the light background
 
 ---
 
@@ -195,67 +197,44 @@ Search `index.html` for each placeholder and replace it:
 
 ### 4.3 Editing Projects
 
-Each project is an `<article class="proj-card">` inside `#proj-grid` in `index.html`.
+Each project is an `<article class="project-card">` inside `.projects-grid` in `index.html`.
 
 ```html
-<article class="proj-card" data-cat="ai">          <!-- filter category -->
-  <p class="proj-num" aria-hidden="true">01</p>    <!-- display number -->
-  <p class="proj-type">AI Engineering</p>          <!-- category label -->
-  <h3 class="proj-title">Project Name Here</h3>
-  <p class="proj-desc">Short description of the project.</p>
-  <ul class="proj-pills" aria-label="Technologies used">
-    <li class="proj-pill">React</li>
-    <li class="proj-pill">Python</li>
-  </ul>
-  <a href="https://your-project-url.com" class="proj-link"
-     aria-label="View Project Name project">View Project →</a>
+<article class="project-card">
+  <div class="project-card-image">🤖</div>
+  <div class="project-card-content">
+    <p class="project-card-category">AI Engineering</p>
+    <h3 class="project-card-title">Project Name Here</h3>
+    <p class="project-card-desc">Short description of the project.</p>
+    <a href="https://your-project-url.com" class="project-card-link"
+       aria-label="View Project Name project">View Project →</a>
+  </div>
 </article>
 ```
 
-**Filter categories** — set `data-cat` to one of:
-
-| Value | Filter button |
-|---|---|
-| `ai` | AI & Data |
-| `dev` | Development |
-| `design` | Design |
-
-To add a new project, duplicate any `<article class="proj-card">` block and update
+To add a new project, duplicate any `<article class="project-card">` block and update
 the content. To remove one, delete the entire `<article>` block.
 
 ---
 
 ### 4.4 Editing Experience
 
-Each role consists of two parts — a **tab** in `.exp-nav` and a **panel** in `.exp-panels`.
-They are linked by matching `aria-controls` / `id` attributes.
+Each role is a `.timeline-item` inside `.timeline` in `index.html`.
 
-**Tab (left column):**
 ```html
-<div class="exp-tab" role="tab" aria-selected="false"
-     aria-controls="ep1" tabindex="-1"
-     onclick="showExp(1, this)" onkeydown="expKey(event, 1)">
-  <p class="exp-tab-co">Company Name</p>
-  <p class="exp-tab-role">Job Title · 2021–2022</p>
-</div>
-```
-
-**Panel (right column):**
-```html
-<div id="ep1" class="exp-panel" role="tabpanel" aria-hidden="true">
-  <p class="exp-date">2021 — 2022</p>
-  <h3 class="exp-title">Job Title</h3>
-  <p class="exp-co">Company Name</p>
-  <ul class="exp-list">
+<div class="timeline-item">
+  <div class="timeline-date">2021 — 2022</div>
+  <h3 class="timeline-title">Job Title</h3>
+  <p class="timeline-company">Company Name</p>
+  <ul class="timeline-list">
     <li>What you achieved here.</li>
     <li>Another accomplishment.</li>
   </ul>
 </div>
 ```
 
-To add a new role, increment the index number throughout (e.g. `ep4` → `ep5`) and
-add both a tab and a panel. The first tab/panel (index `0`) should always have
-`aria-selected="true"` and `aria-hidden="false"` as the default active state.
+To add a new role, duplicate any `.timeline-item` block and update the content.
+To remove one, delete the entire `.timeline-item` block.
 
 ---
 
@@ -276,7 +255,7 @@ consecutive visits never show the same one twice.
 
 ## 5. File Reference
 
-### `index.html` — 761 lines
+### `index.html` — 539 lines
 
 The single HTML document for the entire site. Structured as follows:
 
@@ -286,55 +265,54 @@ The single HTML document for the entire site. Structured as follows:
 
 <body>
   .skip-link             Keyboard accessibility — jumps to #main
-  #c-dot / #c-ring       Custom cursor elements
   #splash                Quote overlay (text populated by script.js)
   <header>
     #nav                 Primary navigation bar
     #nav-mobile          Full-screen mobile menu overlay
   <main id="main">
-    #hero                Name, descriptor, CTAs, cinematic photo layer
-    #about               Biography + pull-quote + detail cards
-    #skills              Three skill columns with animated bars
-    #projects            Filterable project grid (6 cards)
-    #experience          Tabbed career timeline (4 roles)
-    #services            Four service cards with deliverable lists
-    #blog                Editorial article grid (4 cards)
+    #animated-bg         Particle canvas background
+    #hero                Name, descriptor, CTAs, circular profile photo
+    #about               Biography + call-to-action
+    #skills              Filterable skill cards with category tabs
+    #projects            Project card grid (6 cards)
+    #experience          Vertical timeline (4 career entries)
+    #services            Four service cards with icon animations
+    #blog                Editorial article grid (3 cards)
     #contact             Channel links + accessible contact form
-  <footer>               Centred: GTL gem, socials, rule, copyright, back-to-top
+  <footer>               Centred: GTL logo, socials, copyright, back-to-top
   <script src="script.js" defer>
 ```
 
 ---
 
-### `style.css` — 1,124 lines
+### `style.css` — 1,150+ lines
 
 All visual styling, organised in labelled sections:
 
 | Section | Approx. Lines | What It Covers |
 |---|---|---|
-| Design Tokens | 1–22 | All CSS custom properties (colours, easing curve) |
-| Reset | 23–52 | Box-sizing, margin reset, base element defaults |
-| Skip Link | 53–63 | Keyboard nav accessibility link |
-| Film Grain | 64–73 | `body::after` noise texture overlay |
-| Custom Cursor | 74–103 | Dot + ring cursor with hover state expansion |
-| Quote Splash | 104–148 | Full-screen overlay, progress bar, fade animation |
-| Navigation | 149–272 | Fixed nav, logo gem, links, hamburger, mobile menu |
-| Hero | 273–412 | Photo layer, vignettes, glow, name, descriptor, buttons, scroll cue |
-| Section Shell | 413–462 | Shared section padding, eyebrow, headings, rule, reveal classes |
-| About | 463–512 | Two-column grid, pull-quote, detail cards |
-| Skills | 513–562 | Three-column grid, progress bars, tag cloud |
-| Projects | 563–632 | Filter bar, project grid, card hover effects |
-| Experience | 633–702 | Tab nav, panels, bullet list items |
-| Services | 703–762 | Service cards, ghost background numbers |
-| Blog | 763–812 | Editorial grid, featured spanning card |
-| Contact | 813–912 | Channel links, form inputs, labels — all WCAG AA contrast |
-| Footer | 913–982 | Centred column, GTL gem emblem, social links |
-| Animations | 983–992 | `@keyframes fadeUp` |
-| Responsive | 993–1124 | Media queries for ≤960px and ≤560px breakpoints |
+| Design Tokens | 1–62 | All CSS custom properties (colours, spacing, typography scale, radii) |
+| Dark Mode | 64–84 | `[data-theme="dark"]` overrides for backgrounds and text |
+| Reset | 86–100 | Box-sizing, margin reset, base element defaults |
+| Skip Link | 101–110 | Keyboard nav accessibility link |
+| Quote Splash | 111–188 | Full-screen overlay, progress bar, fade animation |
+| Navigation | 189–312 | Fixed nav, logo, links, hamburger, mobile menu, theme toggle |
+| Hero | 313–380 | Photo ring, gradient background, particle canvas, name, descriptor, buttons |
+| Section Shell | 381–430 | Shared section padding, eyebrow, headings, rule |
+| About | 431–490 | Two-column grid, call-to-action |
+| Skills | 491–550 | Category tabs, skill card grid with filter transitions |
+| Projects | 551–610 | Project card grid, hover effects |
+| Experience | 611–670 | Vertical timeline, timeline items |
+| Services | 671–730 | Service cards with icon animations and hover lift |
+| Blog | 731–780 | Editorial grid, featured and side cards |
+| Contact | 781–880 | Channel links, form inputs, labels, validation states |
+| Footer | 881–950 | Centred column, GTL logo, social links, back-to-top |
+| Animations | 951–1000 | `@keyframes fadeUp`, `pulseGlow`, `float` |
+| Responsive | 1001–1150+ | Media queries for all breakpoints + reduced motion support |
 
 ---
 
-### `script.js` — 225 lines
+### `script.js` — 312 lines
 
 All JavaScript behaviour in clearly labelled sections:
 
@@ -344,18 +322,18 @@ All JavaScript behaviour in clearly labelled sections:
 | `pickQuote()` | Random selection, avoids last shown via `localStorage` key `gtl_q` |
 | `initSplash()` (IIFE) | Populates splash text, starts 4s auto-dismiss, binds click & keydown |
 | `dismissSplash()` | Adds `.out` class (CSS fade), removes element from DOM after 1s |
-| Cursor RAF loop | `requestAnimationFrame` tick — dot snaps to mouse; ring lags behind |
-| Hover listeners | Adds/removes `.hovering` on `<body>` → CSS expands cursor ring |
 | Nav scroll handler | Toggles `.solid` class on `#nav` when `scrollY > 60` |
 | `toggleMobileNav()` | Opens/closes mobile menu; locks body scroll while open |
 | `closeMobileNav()` | Resets menu + scroll lock; bound to `Escape` key |
-| Reveal observer | `IntersectionObserver` — adds `.vis` to `.reveal` elements as they enter viewport |
-| Bar observer | `IntersectionObserver` — animates `.bar-fill` width when skill columns scroll in |
-| `showExp(idx)` | Sets `aria-selected` on tabs, `aria-hidden` on panels |
-| `expKey(e, idx)` | ↑ ↓ arrow key navigation across experience tabs |
-| `filterProj(cat)` | Sets `aria-pressed` on filter buttons; shows/hides cards by `data-cat` |
-| `handleForm(e)` | Prevents default submit, shows "Sent ✓" state, resets form after 3.5s |
+| Reveal observer | `IntersectionObserver` — adds `.visible` to cards as they enter viewport |
+| `showSkills(category)` | Filters skill cards by `data-category`; toggles `.active` on tabs |
+| `handleContactForm(e)` | Validates fields, shows loading/success/error states, resets form |
+| `setFormStatus()` | Updates `.form-status` text and `data-state` attribute |
+| `setFieldError()` | Sets `aria-invalid` on invalid fields |
+| Particle init | `initParticles()` — sets up `<canvas>` with 50 colourful floating dots |
 | Active nav observer | `IntersectionObserver` — applies `aria-current="page"` to nav links on scroll |
+| `toggleTheme()` | Switches `data-theme` between `light`/`dark`, persists to `localStorage` |
+| `loadTheme()` (IIFE) | Restores saved theme on page load |
 | `#ft-year` | Inserts `new Date().getFullYear()` into the footer copyright span |
 
 ---
@@ -369,29 +347,70 @@ and it cascades through the entire site instantly.
 
 ```css
 :root {
-  /* Backgrounds — darkest to lightest */
-  --void:      #000000;   /* Page base background              */
-  --deep:      #00111f;   /* Deep section backgrounds          */
-  --card:      #001427;   /* Card / grid cell backgrounds      */
-  --surface:   #03071e;   /* Alternate section backgrounds     */
-
-  /* Accent colours */
-  --crimson:   #6a040f;   /* Crimson red — type labels, bullets */
-  --fire:      #9d0208;   /* Deeper red (available for use)    */
-  --gold:      #c9a84c;   /* Primary gold accent               */
-  --gold-lite: #e8c97a;   /* Light gold — hover states         */
-  --gold-dim:  rgba(201, 168, 76, 0.12);  /* Subtle gold borders  */
-  --gold-mid:  rgba(201, 168, 76, 0.35);  /* Medium gold borders  */
-
-  /* Text tiers */
-  --text-1:    #f0ead6;   /* Primary — headings, values, nav   */
-  --text-2:    #c2b89e;   /* Secondary — body copy, subtitles  */
-  --text-3:    #7a7060;   /* Muted — decorative / metadata     */
-
+  /* Light, vibrant backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  
+  /* Accent colors - modern and vibrant */
+  --accent-primary: #6366f1;    /* Indigo - primary action */
+  --accent-secondary: #8b5cf6;  /* Violet - secondary */
+  --accent-tertiary: #06b6d4;   /* Cyan - accent */
+  --accent-warm: #f59e0b;       /* Amber - warm accent */
+  --accent-success: #10b981;    /* Emerald - success */
+  --accent-danger: #ef4444;     /* Red - danger */
+  
+  /* Vibrant hero colors */
+  --hero-red: #ff4757;
+  --hero-blue: #1e90ff;
+  --hero-orange: #ffa502;
+  
+  /* Text colors */
+  --text-primary: #1e293b;      /* Dark slate for headings */
+  --text-secondary: #475569;    /* Slate for body */
+  --text-muted: #94a3b8;        /* Light slate for muted */
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  
+  /* Spacing scale */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 5rem;
+  
+  /* Typography scale */
+  --font-xs: clamp(0.75rem, 1.5vw, 0.875rem);
+  --font-sm: clamp(0.875rem, 1.8vw, 1rem);
+  --font-md: clamp(1rem, 2vw, 1.125rem);
+  --font-lg: clamp(1.125rem, 2.5vw, 1.25rem);
+  --font-xl: clamp(1.5rem, 3vw, 2rem);
+  --font-2xl: clamp(2rem, 4vw, 2.5rem);
+  --font-3xl: clamp(2.5rem, 5vw, 3rem);
+  
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
   /* Easing */
-  --ease:      cubic-bezier(0.4, 0, 0.2, 1);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 ```
+
+> **Note:** The site features a vibrant light palette with indigo, violet, cyan, and amber accents. Dark mode is available via the theme toggle button in the header.
 
 ---
 
@@ -427,14 +446,40 @@ Grid column counts can be changed directly in `style.css`:
 
 **Services grid** (default: 2 columns):
 ```css
-.srv-grid { grid-template-columns: repeat(1, 1fr); }  /* stacked */
-.srv-grid { grid-template-columns: repeat(3, 1fr); }  /* 3 columns */
+.services-grid { grid-template-columns: repeat(1, 1fr); }  /* stacked */
+.services-grid { grid-template-columns: repeat(3, 1fr); }  /* 3 columns */
 ```
 
-**Blog grid** (default: 5fr 3fr 3fr — featured + two side):
+**Blog grid** (default: featured + two side):
 ```css
 .blog-grid { grid-template-columns: 1fr 1fr 1fr; }  /* equal columns */
 .blog-grid { grid-template-columns: 1fr 1fr; }       /* two columns */
+```
+
+### 6.4 Responsive Breakpoints
+
+The site uses a mobile-first approach with the following breakpoints:
+
+| Breakpoint | Min Width | Max Width | Behavior |
+|------------|---------|-----------|----------|
+| Small Mobile | - | 560px | Single column, stacked elements, reduced padding |
+| Tablet Portrait | 561px | 960px | Two column grids where appropriate |
+| Small Desktop | 961px | 1024px | Full navigation, 2-3 column grids |
+| Standard Desktop | 1025px | 1279px | Full 3-column layouts |
+| Large Desktop | 1280px | - | Max-width constraints, centered content |
+
+```css
+/* Example: Two column on tablet */
+@media (min-width: 561px) and (max-width: 960px) {
+  .skills-grid,
+  .projects-grid,
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; }
+}
 ```
 
 ---
@@ -448,16 +493,17 @@ This site is built to meet **WCAG 2.1 Level AA** standards throughout.
 | Semantic HTML5 | `<header>`, `<main>`, `<footer>`, `<nav>`, `<section>`, `<article>` used correctly |
 | Section labels | All `<section>` elements have `aria-labelledby` pointing to their `<h2>` |
 | Skip link | Visible-on-focus skip-to-content link at the top of the page |
-| Tab pattern | Experience section uses full ARIA tab pattern: `role="tab"`, `aria-selected`, `aria-controls`, `role="tabpanel"`, `aria-hidden` |
-| Keyboard nav | ↑ ↓ arrow keys navigate between experience tabs |
-| Filter buttons | `aria-pressed="true/false"` reflects current active filter |
+| Keyboard nav | `Escape` closes mobile menu; all interactive elements are focusable |
+| Filter buttons | `aria-pressed="true/false"` reflects current active filter on skill tabs |
 | Link labels | All ambiguous links (e.g. "View Project →") have descriptive `aria-label` |
 | Form labels | All inputs have associated `<label for="…">` and `autocomplete` attributes |
-| Focus indicator | `focus-visible` ring styled in gold — visible and distinct |
+| Form validation | `aria-invalid` set on invalid fields; `aria-live="polite"` status region |
+| Focus indicator | `focus-visible` ring styled with accent colour — visible and distinct |
 | Decorative elements | All decorative elements have `aria-hidden="true"` |
 | Colour contrast | All body text meets AA ratio (≥ 4.5:1) against background colours |
 | Motion | Animations use `transition` and `IntersectionObserver` — no auto-playing video |
 | Mobile menu | `aria-expanded` on toggle button reflects open/closed state |
+| Theme toggle | `aria-label` describes current action (toggle dark mode) |
 
 ---
 
@@ -584,8 +630,8 @@ Run through this before publishing:
 - [ ] Real email address in the contact section and email link
 - [ ] All social media links point to your actual profiles
 - [ ] Your photo has been added and displays correctly on desktop and mobile
-- [ ] All six project cards have real titles, descriptions, and working links
-- [ ] Experience section reflects your actual career history
+- [ ] All project cards have real titles, descriptions, and working links
+- [ ] Experience timeline reflects your actual career history
 - [ ] Blog articles either link to real posts, or placeholder cards are updated
 - [ ] Hero year (`Portfolio · 2026`) is current
 - [ ] Footer copyright year updates automatically ✓ (handled by JS)
@@ -594,12 +640,14 @@ Run through this before publishing:
 - [ ] All three files (`index.html`, `style.css`, `script.js`) are in the same folder
 - [ ] Photo is compressed to under 300 KB and in WebP format if possible
 - [ ] SEO meta tags, OG tags, and Twitter Card tags are filled in with your domain
-- [ ] Favicon files are in the folder (`favicon-32.png`, `favicon-16.png`, `apple-touch-icon.png`)
+- [ ] Favicon files are in the folder (`favicon-32x32.png`, `favicon-16x16.png`, `apple-touch-icon.png`)
 - [ ] Canonical URL `<link>` points to your live domain
 - [ ] Tested in Chrome, Firefox, and Safari
 - [ ] Tested on a real physical mobile device (not just browser DevTools)
 - [ ] Lighthouse audit run — Performance, Accessibility, SEO all green
 - [ ] All visible text has been spell-checked
+- [ ] Dark mode toggle works and persists across page reloads
+- [ ] Particle canvas animation runs smoothly on target devices
 
 **After Launch**
 - [ ] URL submitted to [Google Search Console](https://search.google.com/search-console)
@@ -613,11 +661,13 @@ Run through this before publishing:
 
 ## 13. FAQ
 
-**Q: Why isn't the custom cursor visible on mobile?**
+**Q: Why doesn't the particle animation show on my device?**
 
-The cursor is driven by `mousemove` events, which don't fire on touchscreens.
-The `cursor: none` on `body` is intentional for desktop only — on touch devices,
-the native tap interaction takes over automatically. This is correct behaviour.
+The particle canvas uses `requestAnimationFrame` and `<canvas>` API, which are
+supported in all modern browsers. If you see a blank hero background, check the
+browser console for errors — a common cause is an ad blocker or privacy extension
+that blocks canvas context creation. The site degrades gracefully: the gradient
+background remains visible even without particles.
 
 ---
 
@@ -635,7 +685,7 @@ is possible. Adding more quotes to the `QUOTES` array in `script.js` increases v
 The form is front-end only — it shows a confirmation state but has no backend.
 To receive real emails, the easiest no-server solutions are:
 
-- **[Formspree](https://formspree.io)** — add `method="POST" action="https://formspree.io/f/YOUR_ID"` to the `<form>` tag and remove the `onsubmit` handler
+- **[Formspree](https://formspree.io)** — add `method="POST" action="https://formspree.io/f/YOUR_ID"` to the `<form>` tag and remove the `submit` event listener in `script.js`
 - **[Web3Forms](https://web3forms.com)** — free, no server, works with a hidden `access_key` input
 - **[EmailJS](https://emailjs.com)** — sends emails directly from JavaScript, no server needed
 
@@ -645,49 +695,40 @@ To receive real emails, the easiest no-server solutions are:
 
 1. In `index.html`, duplicate any `<section>` block and give it a unique `id` (e.g. `id="testimonials"`)
 2. Add a nav link: `<li><a href="#testimonials">Testimonials</a></li>` in `.nav-list` and `#nav-mobile`
-3. Style the section in `style.css` using `.section-alt` or `.section-deep` as the background class
+3. Style the section in `style.css` using `.section` or `.section-alt` as the background class
 4. Use a grid or flex layout for the testimonial cards, following the same card patterns as Services or Projects
 
 ---
 
-**Q: Can I remove the skill percentage numbers?**
+**Q: Can I change the particle colours?**
 
-Yes. In `index.html`, find each `.bar-meta` div and remove the second `<span>` (the one with the percentage). You can also remove the `.bar-track` and `.bar-fill` entirely and use only the `.tag-cloud` if you prefer a tag-only approach.
+Yes. In `script.js`, find the `colors` array inside `initParticles()` and replace
+the RGBA values with your preferred hues. The current palette uses red (`#ff4757`),
+blue (`#1e90ff`), and orange (`#ffa502`).
 
 ---
 
 **Q: The hero photo is too dark / too light. How do I adjust it?**
 
-In `style.css`, find `.hero-photo-layer img` and adjust the `opacity` value:
-
-```css
-.hero-photo-layer img {
-  opacity: 0.18;        /* increase for more visible, decrease for subtler */
-  filter: grayscale(60%) contrast(1.1);  /* adjust or remove grayscale as needed */
-}
-```
-
-You can also modify the gradient vignettes in `.hero-photo-layer::after` to change
-how aggressively the edges fade.
+The photo is displayed inside `.hero-photo` with a circular clip and gradient ring.
+To adjust the ring size, modify `.hero-photo-ring` in `style.css`. To change the
+photo size, adjust `.hero-photo img` width/height values.
 
 ---
 
-**Q: How do I make the site's colours lighter or less dark?**
+**Q: How do I switch to dark mode permanently?**
 
-Change `--void`, `--deep`, `--card`, and `--surface` in `style.css` to lighter values.
-For example, replacing `--void: #000000` with `--void: #0a0a0a` adds a very subtle
-lift. For a fully light theme, swap all background tokens to light greys and all text
-tokens to dark values — but you will also need to invert the gradient directions
-and adjust border opacities throughout.
+The dark mode toggle persists your choice in `localStorage` under the key `theme`.
+To force dark mode by default, change the `loadTheme` IIFE in `script.js` to set
+`data-theme="dark"` when no saved preference exists. To force light mode, set
+`data-theme="light"` as the fallback.
 
 ---
 
-**Q: Can I add more experience tabs beyond four?**
+**Q: Can I add more experience entries beyond four?**
 
-Yes. In `index.html`:
-1. Add a new `.exp-tab` div to `.exp-nav` with the correct index (e.g. `onclick="showExp(4, this)"`, `aria-controls="ep4"`)
-2. Add a matching `<div id="ep4" class="exp-panel" role="tabpanel" aria-hidden="true">` to `.exp-panels`
-3. No CSS changes are needed — the tab styles are already generic
+Yes. In `index.html`, duplicate any `.timeline-item` block inside `.timeline` and
+update the content. No JavaScript changes are needed — the timeline is static HTML.
 
 ---
 
@@ -718,17 +759,34 @@ newest version first.
 
 ---
 
+### v2.0.0 — 2026
+**Complete redesign — light/vibrant theme, dark toggle, particle canvas**
+- Rebuilt from ground up with light, vibrant colour palette (indigo, violet, cyan, amber)
+- Dark mode toggle added with `data-theme` attribute and `localStorage` persistence
+- Particle canvas background with colourful floating dots
+- Hero section with circular profile photo, gradient ring, and particle animation
+- Skills section with filterable category cards (All / Development / AI & Data / Design)
+- Experience section with vertical timeline layout
+- Projects section with modern card grid and hover effects
+- Services section with icon animations and hover lift effects
+- Blog section with editorial card grid
+- Contact form with field validation, `aria-invalid`, and `aria-live` status
+- Native cursor — no custom cursor overlay
+- JavaScript event binding via `DOMContentLoaded` and `addEventListener`
+- Scroll reveal animations on all major elements
+- Removed old dark luxury palette, custom cursor, tabbed experience panels, and animated skill bars
+
+---
+
 ### v1.2.0 — 2026
 **Quote system overhaul & hero redesign**
 - Voice synthesis (`SpeechSynthesisUtterance`) removed — replaced with silent
   visual-only quote display
-- Splash auto-dismisses after 4 seconds with animated gold progress bar
+- Splash auto-dismisses after 4 seconds with animated progress bar
 - Clicking anywhere or pressing any key dismisses splash immediately
 - 16-quote pool implemented in `script.js`
 - `localStorage` key `gtl_q` prevents back-to-back quote repeats across visits
 - Hero stats strip (years / projects / clients) removed as requested
-- Hero photo changed from rectangular portrait frame to full-bleed cinematic
-  background layer with dual gradient vignettes and `grayscale` filter
 - Role descriptor line added beneath hero name
 - `aria-current="page"` now applied to active nav link via `IntersectionObserver`
   as sections enter the viewport
@@ -741,16 +799,12 @@ newest version first.
   `<nav>`, `<section>`, `<article>`)
 - All sections given `aria-labelledby` attributes
 - Skip-to-content link added
-- Experience section upgraded to full ARIA tab pattern with `role="tab"`,
-  `aria-selected`, `aria-controls`, `role="tabpanel"`, `aria-hidden`
-- ↑ ↓ arrow key navigation added to experience tabs via `expKey()`
-- Filter buttons use `aria-pressed="true/false"`
-- `focus-visible` ring styled in gold
-- All meaningful links given descriptive `aria-label` attributes
-- Form inputs given `<label for>` associations and `autocomplete` attributes
 - Mobile hamburger menu added with full-screen animated overlay
 - `Escape` key closes mobile menu
 - Body scroll locked while mobile menu is open
+- `focus-visible` ring styled
+- All meaningful links given descriptive `aria-label` attributes
+- Form inputs given `<label for>` associations and `autocomplete` attributes
 
 ---
 
@@ -758,32 +812,29 @@ newest version first.
 **Initial build**
 - All eight sections implemented: Hero, About, Skills, Projects, Experience,
   Services, Articles, Contact
-- Custom animated cursor — gold dot + lagging ring with hover expansion
-- Film-grain texture overlay via inline SVG `feTurbulence` filter
+- Textured overlay effect
 - Diamond GTL monogram logo with double-border inner detail
 - Scroll-reveal animations on all major elements via `IntersectionObserver`
-- Animated skill progress bars triggered on scroll entry
 - Project filter — All / Development / AI & Data / Design
-- Tabbed experience timeline with 4 career entries
+- Tabbed career timeline with 4 entries
 - Contact form with visual submit confirmation (resets after 3.5s)
 - Responsive layout — single column below 960px, stacked hero on mobile
-- Dark & elegant luxury aesthetic — crimson-gold palette on near-black backgrounds
+- Dark luxury aesthetic with gold accents on near-black backgrounds
 
 ---
 
 ## 15. Author
 
-**Gideon Tetteh Luotey**  
-Web Developer · Data Scientist · AI Engineer · Graphic Designer · Video Editor  
+**Gideon Tetteh Luotey**
+Web Developer · Data Scientist · AI Engineer · Graphic Designer · Video Editor
 Accra, Ghana 🇬🇭
 
 | Platform | Handle / URL |
 |---|---|
-| Email | gideon@example.com |
-| LinkedIn | linkedin.com/in/gideon-luotey |
-| GitHub | github.com/gideon-luotey |
-| X / Twitter | @gideon_luotey |
-| Behance | behance.net/gideon-luotey |
+| Email | hello@gideonluotey.com |
+| LinkedIn | linkedin.com/in/gideon-tetteh-luotey |
+| GitHub | github.com/ogidibron |
+| X / Twitter | x.com |
 
 ---
 
