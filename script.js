@@ -184,60 +184,112 @@ function handleContactForm(e) {
   }, 1200);
 }
 
-/* ─── PARTICLE BACKGROUND ─────────────────────────────────── */
-function initParticles() {
+/* ─── TECHIE BACKGROUND ────────────────────────────────────── */
+function initTechBackground() {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas) return;
   
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
 
-  const particles = [];
-  const particleCount = 50;
+  const gridSize = 50;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const gridColor = isDark ? 'rgba(99, 102, 241, 0.15)' : 'rgba(99, 102, 241, 0.1)';
+  const dataColor = isDark ? 'rgba(16, 185, 129, 0.8)' : 'rgba(99, 102, 241, 0.7)';
 
-  for (let i = 0; i < particleCount; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 3 + 1,
-      speedX: (Math.random() - 0.5) * 0.5,
-      speedY: (Math.random() - 0.5) * 0.5,
-      opacity: Math.random() * 0.5 + 0.2
-    });
+  // Data flow particles
+  const dataFlows = Array(30).fill().map(() => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    speed: Math.random() * 1.5 + 0.5,
+    char: Math.random() > 0.5 ? '1' : '0',
+    size: Math.random() * 4 + 10
+  }));
+
+  function drawGrid() {
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = 1;
+    
+    for (let x = 0; x < width; x += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+    }
+    
+    for (let y = 0; y < height; y += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
   }
 
   function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, width, height);
+    drawGrid();
     
-    particles.forEach(p => {
-     // Vibrant particle colors - red, blue, orange
-     const colors = [
-       `rgba(255, 71, 87, ${p.opacity})`,
-       `rgba(30, 144, 255, ${p.opacity})`,
-       `rgba(255, 165, 2, ${p.opacity})`
-     ];
-     ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
-     ctx.beginPath();
-     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-     ctx.fill();
-
-      p.x += p.speedX;
-      p.y += p.speedY;
-
-      if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+    dataFlows.forEach(flow => {
+      ctx.fillStyle = dataColor;
+      ctx.font = `${flow.size}px monospace`;
+      ctx.fillText(flow.char, flow.x, flow.y);
+      flow.x += flow.speed;
+      if (flow.x > width) {
+        flow.x = 0;
+        flow.y = Math.random() * height;
+      }
     });
-
+    
     requestAnimationFrame(animate);
   }
 
   animate();
 
   window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
   });
+}
+
+/* ─── ROLE CAROUSEL ─────────────────────────────────────────── */
+const roles = [
+  "Full-Stack Developer",
+  "Data Scientist",
+  "AI Engineer"
+];
+
+function initRoleCarousel() {
+  const carousel = document.getElementById('role-carousel');
+  if (!carousel) return;
+  
+  let currentRole = 0;
+  
+  function typeWriter(text, i = 0) {
+    if (i < text.length) {
+      carousel.textContent = text.substring(0, i + 1);
+      setTimeout(() => typeWriter(text, i + 1), 100);
+    } else {
+      setTimeout(eraseText, 2000);
+    }
+  }
+  
+  function eraseText() {
+    const text = carousel.textContent;
+    if (text.length > 0) {
+      carousel.textContent = text.substring(0, text.length - 1);
+      setTimeout(eraseText, 50);
+    } else {
+      currentRole = (currentRole + 1) % roles.length;
+      setTimeout(() => typeWriter(roles[currentRole]), 500);
+    }
+  }
+  
+  typeWriter(roles[0]);
 }
 
 /* ─── ACTIVE NAV LINK ON SCROLL ──────────────────────────── */
@@ -286,7 +338,8 @@ function toggleTheme() {
 
 /* ─── INIT ─────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  initParticles();
+  initTechBackground();
+  initRoleCarousel();
 
   // Dynamic copyright year
   const yearEl = document.getElementById('ft-year');
