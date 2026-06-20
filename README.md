@@ -17,8 +17,9 @@ dependencies. Light, vibrant aesthetic with a modern indigo-violet-cyan palette 
    - [Adding Your Photo](#41-adding-your-photo)
    - [Updating Your Details](#42-updating-your-details)
    - [Editing Projects](#43-editing-projects)
-   - [Editing Experience](#44-editing-experience)
-   - [Adding Quotes](#45-adding-quotes)
+   - [Restoring the Experience Section](#44-restoring-the-experience-section)
+   - [Adding the CV Download File](#45-adding-the-cv-download-file)
+   - [Adding Quotes](#46-adding-quotes)
 5. [File Reference](#5-file-reference)
 6. [Customisation Reference](#6-customisation-reference)
    - [Colours](#61-colours)
@@ -75,6 +76,7 @@ portfolio/
 - **Subtle gradient background** with soft red/blue glows
 - **Particle animation** with colorful dots floating in the background via `<canvas>`
 - Role descriptor line: *Full-Stack Developer · Data Scientist · AI Engineer · Designer*
+- Primary CTAs for viewing work, downloading the CV, and starting a conversation
 
 ### Sections
 
@@ -83,7 +85,7 @@ portfolio/
 | About      | Two-column biography and call-to-action |
 | Skills     | Filterable skill cards with category tabs (All / Development / AI & Data / Design) |
 | Projects   | Card grid — 6 project cards with category tags and hover effects |
-| Experience | Vertical timeline — 4 career entries with dates, titles, and achievements |
+| Experience | Temporarily hidden with HTML comments so it can be restored later |
 | Services   | Four service cards with icon animations and hover lift effects |
 | Articles   | Editorial blog grid — featured card plus side articles |
 | Contact    | Channel links + fully accessible contact form with validation and submit feedback |
@@ -217,28 +219,53 @@ the content. To remove one, delete the entire `<article>` block.
 
 ---
 
-### 4.4 Editing Experience
+### 4.4 Restoring the Experience Section
 
-Each role is a `.timeline-item` inside `.timeline` in `index.html`.
+The Experience section is currently hidden in `index.html` with HTML comments. This keeps
+the career timeline in the source code while removing it from the visible portfolio flow.
 
-```html
-<div class="timeline-item">
-  <div class="timeline-date">2021 — 2022</div>
-  <h3 class="timeline-title">Job Title</h3>
-  <p class="timeline-company">Company Name</p>
-  <ul class="timeline-list">
-    <li>What you achieved here.</li>
-    <li>Another accomplishment.</li>
-  </ul>
-</div>
-```
+To restore it later:
 
-To add a new role, duplicate any `.timeline-item` block and update the content.
-To remove one, delete the entire `.timeline-item` block.
+1. In `index.html`, find the commented block that starts with:
+
+   ```html
+   <!-- ════════════════════ EXPERIENCE ════════════════════
+        Temporarily hidden for the current portfolio flow.
+        To restore, uncomment the section below and re-add the Experience nav links.
+   -->
+   <!--
+   <section id="experience" class="section section-alt" aria-labelledby="experience-title">
+   ```
+
+2. Remove the opening `<!--` before the `<section>` and the closing `-->` after the section.
+3. Re-add the Experience navigation item to both `.nav-list` and `#nav-mobile`:
+
+   ```html
+   <li><a href="#experience">Experience</a></li>
+   ```
+
+4. The active navigation observer in `script.js` will automatically include the section
+   again because it now tracks sections that are linked from the navigation.
 
 ---
 
-### 4.5 Adding Quotes
+### 4.5 Adding the CV Download File
+
+The hero section includes a CV download button linked to:
+
+```html
+<a href="Gideon_Tetteh_Luotey_CV.pdf" class="btn-cv" download>
+  Download CV ↓
+</a>
+```
+
+Place a PDF named `Gideon_Tetteh_Luotey_CV.pdf` in the project root, next to `index.html`,
+so the button downloads the correct file. If your CV file has a different name, update
+the `href` value to match the actual filename.
+
+---
+
+### 4.6 Adding Quotes
 
 Open `script.js` and find the `QUOTES` array at the top of the file.
 Add as many entries as you like in this format:
@@ -271,17 +298,19 @@ The single HTML document for the entire site. Structured as follows:
     #nav-mobile          Full-screen mobile menu overlay
   <main id="main">
     #animated-bg         Particle canvas background
-    #hero                Name, descriptor, CTAs, circular profile photo
+    #hero                Name, descriptor, CTAs, circular profile photo, CV download button
     #about               Biography + call-to-action
     #skills              Filterable skill cards with category tabs
     #projects            Project card grid (6 cards)
-    #experience          Vertical timeline (4 career entries)
+    #experience          Temporarily hidden with HTML comments; restore when ready
     #services            Four service cards with icon animations
     #blog                Editorial article grid (3 cards)
     #contact             Channel links + accessible contact form
   <footer>               Centred: GTL logo, socials, copyright, back-to-top
   <script src="script.js" defer>
 ```
+
+The CV download button expects a root-level PDF file named `Gideon_Tetteh_Luotey_CV.pdf`.
 
 ---
 
@@ -302,7 +331,7 @@ All visual styling, organised in labelled sections:
 | About | 431–490 | Two-column grid, call-to-action |
 | Skills | 491–550 | Category tabs, skill card grid with filter transitions |
 | Projects | 551–610 | Project card grid, hover effects |
-| Experience | 611–670 | Vertical timeline, timeline items |
+| CV Button | 611–630 | Hero CV download button styling |
 | Services | 671–730 | Service cards with icon animations and hover lift |
 | Blog | 731–780 | Editorial grid, featured and side cards |
 | Contact | 781–880 | Channel links, form inputs, labels, validation states |
@@ -312,29 +341,30 @@ All visual styling, organised in labelled sections:
 
 ---
 
-### `script.js` — 312 lines
+### `script.js`
 
-All JavaScript behaviour in clearly labelled sections:
+All JavaScript behaviour is split into clear, labelled sections:
 
 | Section / Function | What It Does |
 |---|---|
+| Helpers | Small selector helpers (`$`, `$$`) and shared constants |
 | `QUOTES` array | 16 hard-hitting inspirational quotes |
 | `pickQuote()` | Random selection, avoids last shown via `localStorage` key `gtl_q` |
-| `initSplash()` (IIFE) | Populates splash text, starts 4s auto-dismiss, binds click & keydown |
+| `initSplash()` | Populates splash text, starts 4s auto-dismiss, binds click & keydown |
 | `dismissSplash()` | Adds `.out` class (CSS fade), removes element from DOM after 1s |
-| Nav scroll handler | Toggles `.solid` class on `#nav` when `scrollY > 60` |
-| `toggleMobileNav()` | Opens/closes mobile menu; locks body scroll while open |
-| `closeMobileNav()` | Resets menu + scroll lock; bound to `Escape` key |
-| Reveal observer | `IntersectionObserver` — adds `.visible` to cards as they enter viewport |
+| `initNavigation()` | Handles solid nav, mobile nav, Escape close, and active section highlighting |
+| `initActiveNavObserver()` | Applies `aria-current="page"` only to nav-linked sections on scroll |
+| `initScrollReveal()` | Adds `.visible` to cards as they enter viewport |
 | `showSkills(category)` | Filters skill cards by `data-category`; toggles `.active` on tabs |
+| `initContactForm()` | Binds form submit handling |
 | `handleContactForm(e)` | Validates fields, shows loading/success/error states, resets form |
 | `setFormStatus()` | Updates `.form-status` text and `data-state` attribute |
 | `setFieldError()` | Sets `aria-invalid` on invalid fields |
-| Particle init | `initParticles()` — sets up `<canvas>` with 50 colourful floating dots |
-| Active nav observer | `IntersectionObserver` — applies `aria-current="page"` to nav links on scroll |
+| `initTechBackground()` | Sets up `<canvas>` grid and moving binary data-flow particles |
+| `initRoleCarousel()` | Types and erases hero role labels |
+| `initThemeToggle()` | Loads saved theme and binds the theme toggle button |
 | `toggleTheme()` | Switches `data-theme` between `light`/`dark`, persists to `localStorage` |
-| `loadTheme()` (IIFE) | Restores saved theme on page load |
-| `#ft-year` | Inserts `new Date().getFullYear()` into the footer copyright span |
+| `init()` | Single central initialisation function called on `DOMContentLoaded` |
 
 ---
 
@@ -631,13 +661,14 @@ Run through this before publishing:
 - [ ] All social media links point to your actual profiles
 - [ ] Your photo has been added and displays correctly on desktop and mobile
 - [ ] All project cards have real titles, descriptions, and working links
-- [ ] Experience timeline reflects your actual career history
+- [ ] Experience timeline is restored only when you want it visible again
 - [ ] Blog articles either link to real posts, or placeholder cards are updated
 - [ ] Hero year (`Portfolio · 2026`) is current
 - [ ] Footer copyright year updates automatically ✓ (handled by JS)
 
 **Technical**
 - [ ] All three files (`index.html`, `style.css`, `script.js`) are in the same folder
+- [ ] CV PDF exists in the project root as `Gideon_Tetteh_Luotey_CV.pdf`
 - [ ] Photo is compressed to under 300 KB and in WebP format if possible
 - [ ] SEO meta tags, OG tags, and Twitter Card tags are filled in with your domain
 - [ ] Favicon files are in the folder (`favicon-32x32.png`, `favicon-16x16.png`, `apple-touch-icon.png`)
@@ -702,9 +733,7 @@ To receive real emails, the easiest no-server solutions are:
 
 **Q: Can I change the particle colours?**
 
-Yes. In `script.js`, find the `colors` array inside `initParticles()` and replace
-the RGBA values with your preferred hues. The current palette uses red (`#ff4757`),
-blue (`#1e90ff`), and orange (`#ffa502`).
+Yes. In `script.js`, find the `gridColor` and `dataColor` values inside `initTechBackground()` and replace them with your preferred RGBA values. The current palette uses indigo/cyan tones, with emerald data-flow particles in dark mode.
 
 ---
 
@@ -725,10 +754,19 @@ To force dark mode by default, change the `loadTheme` IIFE in `script.js` to set
 
 ---
 
+**Q: Can I restore the Experience section later?**
+
+Yes. The section is still in `index.html`, but it is wrapped in HTML comments. Remove
+the comment markers around the Experience section and re-add the Experience nav link
+to both `.nav-list` and `#nav-mobile`.
+
+---
+
 **Q: Can I add more experience entries beyond four?**
 
-Yes. In `index.html`, duplicate any `.timeline-item` block inside `.timeline` and
-update the content. No JavaScript changes are needed — the timeline is static HTML.
+Yes. Restore the Experience section first, then duplicate any `.timeline-item` block
+inside `.timeline` and update the content. No JavaScript changes are needed — the
+timeline is static HTML.
 
 ---
 
@@ -756,6 +794,30 @@ newest version first.
   to `--text-2` for readability at smaller font sizes and for users with mild
   visual impairment
 - Added `README.md` with full project documentation
+
+---
+
+### v2.1.0 — 2026
+**Portfolio flow simplification + CV download CTA**
+- Experience section temporarily hidden with HTML comments for a cleaner portfolio flow
+- Experience nav link removed from both desktop and mobile navigation
+- Added hero CV download button linked to `Gideon_Tetteh_Luotey_CV.pdf`
+- Added amber CV button styling in `style.css`
+- Active navigation observer now tracks only sections linked from navigation
+- README updated with restoration instructions, CV file placement, and deployment checklist
+- JavaScript syntax verified with `node --check script.js`
+
+---
+
+### v2.1.1 — 2026
+**JavaScript refactor**
+- Refactored `script.js` into clear sections: helpers, splash, navigation, reveal, skills, form, background, role carousel, theme, and init
+- Added small selector helpers (`$` and `$$`) to reduce repeated DOM queries
+- Added shared constants for theme, quote storage, and timing delays
+- Replaced scattered setup logic with a single `init()` function
+- Improved active navigation handling with a dedicated clear/set active-link flow
+- Kept behaviour unchanged while making the JavaScript easier to read and maintain
+- JavaScript syntax verified with `node --check script.js`
 
 ---
 

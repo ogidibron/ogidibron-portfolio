@@ -1,123 +1,188 @@
 /* ═══════════════════════════════════════════════════════════
    Gideon Tetteh Luotey — Portfolio Script
+   Refactored for readability and maintainability.
    ═══════════════════════════════════════════════════════════ */
 
-/* ─── QUOTES POOL ────────────────────────────────────────── */
+/* ─── HELPERS ─────────────────────────────────────────────── */
+const $ = (selector, scope = document) => scope.querySelector(selector);
+const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
+
+const THEME_KEY = 'theme';
+const QUOTE_KEY = 'gtl_q';
+const SPLASH_REMOVE_DELAY = 1050;
+const SPLASH_AUTO_DISMISS_DELAY = 4000;
+const CONTACT_SUCCESS_DELAY = 1200;
+
+/* ─── QUOTES ──────────────────────────────────────────────── */
 const QUOTES = [
-  { text: "The greatest tragedy in this world is never trying.",                                          attr: "— Unknown" },
-  { text: "Do not go where the path may lead; go instead where there is no path and leave a trail.",     attr: "— Ralph Waldo Emerson" },
-  { text: "Talent is a pursued interest. Anything that you're willing to practice, you can do.",         attr: "— Bob Ross" },
-  { text: "A person who never made a mistake never tried anything new.",                                  attr: "— Albert Einstein" },
-  { text: "The only way to do great work is to love what you do.",                                        attr: "— Steve Jobs" },
-  { text: "It does not matter how slowly you go as long as you do not stop.",                             attr: "— Confucius" },
-  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.",       attr: "— Winston Churchill" },
-  { text: "The future belongs to those who believe in the beauty of their dreams.",                       attr: "— Eleanor Roosevelt" },
-  { text: "In the middle of every difficulty lies opportunity.",                                          attr: "— Albert Einstein" },
-  { text: "You miss 100% of the shots you don't take.",                                                   attr: "— Wayne Gretzky" },
-  { text: "The secret of getting ahead is getting started.",                                              attr: "— Mark Twain" },
-  { text: "Don't watch the clock; do what it does. Keep going.",                                          attr: "— Sam Levenson" },
-  { text: "Whether you think you can or you think you can't, you're right.",                              attr: "— Henry Ford" },
-  { text: "Build your dreams, or someone else will hire you to build theirs.",                            attr: "— Farrah Gray" },
-  { text: "Hard work beats talent when talent doesn't work hard.",                                        attr: "— Tim Notke" },
-  { text: "The difference between ordinary and extraordinary is that little extra.",                      attr: "— Jimmy Johnson" },
+  { text: "The greatest tragedy in this world is never trying.", attr: "— Unknown" },
+  { text: "Do not go where the path may lead; go instead where there is no path and leave a trail.", attr: "— Ralph Waldo Emerson" },
+  { text: "Talent is a pursued interest. Anything that you're willing to practice, you can do.", attr: "— Bob Ross" },
+  { text: "A person who never made a mistake never tried anything new.", attr: "— Albert Einstein" },
+  { text: "The only way to do great work is to love what you do.", attr: "— Steve Jobs" },
+  { text: "It does not matter how slowly you go as long as you do not stop.", attr: "— Confucius" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", attr: "— Winston Churchill" },
+  { text: "The future belongs to those who believe in the beauty of their dreams.", attr: "— Eleanor Roosevelt" },
+  { text: "In the middle of every difficulty lies opportunity.", attr: "— Albert Einstein" },
+  { text: "You miss 100% of the shots you don't take.", attr: "— Wayne Gretzky" },
+  { text: "The secret of getting ahead is getting started.", attr: "— Mark Twain" },
+  { text: "Don't watch the clock; do what it does. Keep going.", attr: "— Sam Levenson" },
+  { text: "Whether you think you can or you think you can't, you're right.", attr: "— Henry Ford" },
+  { text: "Build your dreams, or someone else will hire you to build theirs.", attr: "— Farrah Gray" },
+  { text: "Hard work beats talent when talent doesn't work hard.", attr: "— Tim Notke" },
+  { text: "The difference between ordinary and extraordinary is that little extra.", attr: "— Jimmy Johnson" },
 ];
 
-/* ─── QUOTE: PICK A DIFFERENT ONE EACH VISIT ─────────────── */
 function pickQuote() {
-  const last = parseInt(localStorage.getItem('gtl_q') ?? '-1', 10);
-  let idx;
+  const lastQuoteIndex = parseInt(localStorage.getItem(QUOTE_KEY) ?? '-1', 10);
+  let quoteIndex;
+
   do {
-    idx = Math.floor(Math.random() * QUOTES.length);
-  } while (idx === last && QUOTES.length > 1);
-  localStorage.setItem('gtl_q', String(idx));
-  return QUOTES[idx];
+    quoteIndex = Math.floor(Math.random() * QUOTES.length);
+  } while (quoteIndex === lastQuoteIndex && QUOTES.length > 1);
+
+  localStorage.setItem(QUOTE_KEY, String(quoteIndex));
+  return QUOTES[quoteIndex];
 }
 
-/* ─── SPLASH SCREEN ──────────────────────────────────────── */
+/* ─── SPLASH SCREEN ───────────────────────────────────────── */
 function dismissSplash() {
-  const sp = document.getElementById('splash');
-  if (!sp || sp.classList.contains('out')) return;
-  sp.classList.add('out');
-  // Remove from DOM after transition so it doesn't interfere
-  setTimeout(() => sp.remove(), 1050);
+  const splash = $('#splash');
+  if (!splash || splash.classList.contains('out')) return;
+
+  splash.classList.add('out');
+  window.setTimeout(() => splash.remove(), SPLASH_REMOVE_DELAY);
 }
 
-(function initSplash() {
-  const q = pickQuote();
-  document.getElementById('splash-text').textContent = q.text;
-  document.getElementById('splash-attr').textContent = q.attr;
+function initSplash() {
+  const splash = $('#splash');
+  if (!splash) return;
 
-  // Auto-dismiss after 4 s
-  setTimeout(dismissSplash, 4000);
+  const quote = pickQuote();
+  $('#splash-text').textContent = quote.text;
+  $('#splash-attr').textContent = quote.attr;
 
-  // Any keypress also dismisses
+  window.setTimeout(dismissSplash, SPLASH_AUTO_DISMISS_DELAY);
   document.addEventListener('keydown', dismissSplash, { once: true });
+  splash.addEventListener('click', dismissSplash);
+}
 
-  // Click anywhere on splash to dismiss
-  document.getElementById('splash').addEventListener('click', dismissSplash);
-})();
-
-/* ─── NAV: SOLID ON SCROLL ───────────────────────────────── */
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
+/* ─── NAVIGATION ──────────────────────────────────────────── */
+function updateSolidNav() {
+  const nav = $('#nav');
   nav?.classList.toggle('solid', window.scrollY > 60);
-}, { passive: true });
+}
 
-/* ─── MOBILE NAV ─────────────────────────────────────────── */
-function toggleMobileNav(btn) {
-  const mobileNav = document.getElementById('nav-mobile');
-  if (!btn || !mobileNav) return;
+function toggleMobileNav(button) {
+  const mobileNav = $('#nav-mobile');
+  if (!button || !mobileNav) return;
 
-  const isOpen = btn.getAttribute('aria-expanded') === 'true';
-  btn.setAttribute('aria-expanded', String(!isOpen));
+  const isOpen = button.getAttribute('aria-expanded') === 'true';
+  button.setAttribute('aria-expanded', String(!isOpen));
   mobileNav.classList.toggle('open', !isOpen);
   document.body.style.overflow = isOpen ? '' : 'hidden';
 }
 
 function closeMobileNav() {
-  const btn = document.querySelector('.nav-toggle');
-  const mobileNav = document.getElementById('nav-mobile');
-  if (!btn || !mobileNav) return;
+  const navToggle = $('.nav-toggle');
+  const mobileNav = $('#nav-mobile');
+  if (!navToggle || !mobileNav) return;
 
-  btn.setAttribute('aria-expanded', 'false');
+  navToggle.setAttribute('aria-expanded', 'false');
   mobileNav.classList.remove('open');
   document.body.style.overflow = '';
 }
 
-/* Close mobile nav on Escape key */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeMobileNav();
-});
+function getLinkedSectionIds() {
+  return $$('.nav-list a')
+    .map(link => link.getAttribute('href'))
+    .filter(href => href?.startsWith('#'))
+    .map(href => href.slice(1));
+}
 
-/* ─── SCROLL REVEAL ──────────────────────────────────────── */
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
+function clearActiveNav() {
+  $$('.nav-list a').forEach(link => {
+    link.removeAttribute('aria-current');
+  });
+}
+
+function setActiveNav(sectionId) {
+  clearActiveNav();
+
+  $$('.nav-list a').forEach(link => {
+    if (link.getAttribute('href') === `#${sectionId}`) {
+      link.setAttribute('aria-current', 'page');
     }
   });
-}, { threshold: 0.1 });
+}
 
-document.querySelectorAll('.skill-card, .project-card, .service-card, .blog-card, .timeline-item').forEach(el => revealObserver.observe(el));
+function initActiveNavObserver() {
+  const linkedSectionIds = getLinkedSectionIds();
 
-/* ─── SKILLS FILTER ──────────────────────────────────────── */
+  const activeObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActiveNav(entry.target.id);
+    });
+  }, { rootMargin: '-50% 0px -50% 0px' });
+
+  $$('section[id]').forEach(section => {
+    if (linkedSectionIds.includes(section.id)) activeObserver.observe(section);
+  });
+}
+
+function initNavigation() {
+  window.addEventListener('scroll', updateSolidNav, { passive: true });
+
+  const navToggle = $('.nav-toggle');
+  navToggle?.addEventListener('click', () => toggleMobileNav(navToggle));
+
+  $$('#nav-mobile a').forEach(link => link.addEventListener('click', closeMobileNav));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeMobileNav();
+  });
+
+  initActiveNavObserver();
+}
+
+/* ─── SCROLL REVEAL ───────────────────────────────────────── */
+function initScrollReveal() {
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.1 });
+
+  $$('.skill-card, .project-card, .service-card, .blog-card, .timeline-item').forEach(el => {
+    revealObserver.observe(el);
+  });
+}
+
+/* ─── SKILLS FILTER ───────────────────────────────────────── */
 function showSkills(category) {
-  document.querySelectorAll('.skill-tab').forEach(tab => {
+  $$('.skill-tab').forEach(tab => {
     const isActive = tab.dataset.category === category;
     tab.classList.toggle('active', isActive);
     tab.setAttribute('aria-pressed', String(isActive));
   });
 
-  document.querySelectorAll('.skill-card').forEach(card => {
+  $$('.skill-card').forEach(card => {
     const shouldShow = category === 'all' || card.dataset.category === category;
     card.style.display = shouldShow ? 'block' : 'none';
   });
 }
 
-/* ─── CONTACT FORM ───────────────────────────────────────── */
+function initSkillsFilter() {
+  $$('.skill-tab').forEach(tab => {
+    tab.addEventListener('click', () => showSkills(tab.dataset.category));
+  });
+}
+
+/* ─── CONTACT FORM ────────────────────────────────────────── */
 function setFormStatus(form, message, type) {
-  const status = form.querySelector('.form-status');
+  const status = $('.form-status', form);
   if (!status) return;
 
   status.textContent = message;
@@ -125,46 +190,38 @@ function setFormStatus(form, message, type) {
 }
 
 function setFieldError(field, hasError) {
-  if (!field) return;
-  field.setAttribute('aria-invalid', String(hasError));
+  field?.setAttribute('aria-invalid', String(hasError));
 }
 
-function handleContactForm(e) {
-  e.preventDefault();
-
-  const form = e.currentTarget;
-  const btn = form.querySelector('button[type="submit"]');
-  const originalText = btn.textContent;
+function validateContactForm(form) {
   const fields = {
-    name: form.querySelector('#f-name'),
-    email: form.querySelector('#f-email'),
-    message: form.querySelector('#f-message')
+    name: $('#f-name', form),
+    email: $('#f-email', form),
+    message: $('#f-message', form),
   };
-
-  setFormStatus(form, '', '');
-  Object.values(fields).forEach(field => setFieldError(field, false));
-
-  const name = fields.name.value.trim();
-  const email = fields.email.value.trim();
-  const message = fields.message.value.trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const errors = [];
 
-  if (!name) {
-    errors.push(fields.name);
-    setFieldError(fields.name, true);
-  }
-  if (!email) {
-    errors.push(fields.email);
-    setFieldError(fields.email, true);
-  } else if (!emailRegex.test(email)) {
-    errors.push(fields.email);
-    setFieldError(fields.email, true);
-  }
-  if (!message) {
-    errors.push(fields.message);
-    setFieldError(fields.message, true);
-  }
+  Object.entries(fields).forEach(([key, field]) => {
+    const value = field.value.trim();
+    const hasError = !value || (key === 'email' && !emailRegex.test(value));
+
+    setFieldError(field, hasError);
+    if (hasError) errors.push(field);
+  });
+
+  return errors;
+}
+
+function handleContactForm(event) {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const submitButton = $('button[type="submit"]', form);
+  const originalText = submitButton.textContent;
+
+  setFormStatus(form, '', '');
+  const errors = validateContactForm(form);
 
   if (errors.length) {
     setFormStatus(form, 'Please complete the highlighted fields before sending.', 'error');
@@ -172,204 +229,178 @@ function handleContactForm(e) {
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
+  submitButton.disabled = true;
+  submitButton.textContent = 'Sending...';
   setFormStatus(form, 'Sending your message...', 'loading');
 
   window.setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = originalText;
+    submitButton.disabled = false;
+    submitButton.textContent = originalText;
     setFormStatus(form, 'Message sent successfully. Thank you for reaching out!', 'success');
     form.reset();
-  }, 1200);
+  }, CONTACT_SUCCESS_DELAY);
 }
 
-/* ─── TECHIE BACKGROUND ────────────────────────────────────── */
-function initTechBackground() {
-  const canvas = document.getElementById('particle-canvas');
-  if (!canvas) return;
-  
-  const ctx = canvas.getContext('2d');
-  let width = window.innerWidth;
-  let height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
+function initContactForm() {
+  $('.contact-form')?.addEventListener('submit', handleContactForm);
+}
 
+/* ─── TECH BACKGROUND ─────────────────────────────────────── */
+function initTechBackground() {
+  const canvas = $('#particle-canvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
   const gridSize = 50;
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const gridColor = isDark ? 'rgba(99, 102, 241, 0.15)' : 'rgba(99, 102, 241, 0.1)';
   const dataColor = isDark ? 'rgba(16, 185, 129, 0.8)' : 'rgba(99, 102, 241, 0.7)';
-
-  // Data flow particles
   const dataFlows = Array(30).fill().map(() => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
     speed: Math.random() * 1.5 + 0.5,
     char: Math.random() > 0.5 ? '1' : '0',
-    size: Math.random() * 4 + 10
+    size: Math.random() * 4 + 10,
   }));
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
 
   function drawGrid() {
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 1;
-    
-    for (let x = 0; x < width; x += gridSize) {
+
+    for (let x = 0; x < canvas.width; x += gridSize) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
+      ctx.lineTo(x, canvas.height);
       ctx.stroke();
     }
-    
-    for (let y = 0; y < height; y += gridSize) {
+
+    for (let y = 0; y < canvas.height; y += gridSize) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
+      ctx.lineTo(canvas.width, y);
       ctx.stroke();
     }
+  }
+
+  function drawDataFlows() {
+    ctx.fillStyle = dataColor;
+
+    dataFlows.forEach(flow => {
+      ctx.font = `${flow.size}px monospace`;
+      ctx.fillText(flow.char, flow.x, flow.y);
+
+      flow.x += flow.speed;
+      if (flow.x > canvas.width) {
+        flow.x = 0;
+        flow.y = Math.random() * canvas.height;
+      }
+    });
   }
 
   function animate() {
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawGrid();
-    
-    dataFlows.forEach(flow => {
-      ctx.fillStyle = dataColor;
-      ctx.font = `${flow.size}px monospace`;
-      ctx.fillText(flow.char, flow.x, flow.y);
-      flow.x += flow.speed;
-      if (flow.x > width) {
-        flow.x = 0;
-        flow.y = Math.random() * height;
-      }
-    });
-    
-    requestAnimationFrame(animate);
+    drawDataFlows();
+    window.requestAnimationFrame(animate);
   }
 
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
   animate();
-
-  window.addEventListener('resize', () => {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-  });
 }
 
-/* ─── ROLE CAROUSEL ─────────────────────────────────────────── */
-const roles = [
-  "Full-Stack Developer",
-  "Data Scientist",
-  "AI Engineer"
+/* ─── ROLE CAROUSEL ───────────────────────────────────────── */
+const ROLES = [
+  'Full-Stack Developer',
+  'Data Scientist',
+  'AI Engineer',
 ];
 
 function initRoleCarousel() {
-  const carousel = document.getElementById('role-carousel');
+  const carousel = $('#role-carousel');
   if (!carousel) return;
-  
+
   let currentRole = 0;
-  
-  function typeWriter(text, i = 0) {
-    if (i < text.length) {
-      carousel.textContent = text.substring(0, i + 1);
-      setTimeout(() => typeWriter(text, i + 1), 100);
-    } else {
-      setTimeout(eraseText, 2000);
+
+  function typeWriter(text, index = 0) {
+    if (index < text.length) {
+      carousel.textContent = text.substring(0, index + 1);
+      window.setTimeout(() => typeWriter(text, index + 1), 100);
+      return;
     }
+
+    window.setTimeout(eraseText, 2000);
   }
-  
+
   function eraseText() {
     const text = carousel.textContent;
+
     if (text.length > 0) {
       carousel.textContent = text.substring(0, text.length - 1);
-      setTimeout(eraseText, 50);
-    } else {
-      currentRole = (currentRole + 1) % roles.length;
-      setTimeout(() => typeWriter(roles[currentRole]), 500);
+      window.setTimeout(eraseText, 50);
+      return;
     }
+
+    currentRole = (currentRole + 1) % ROLES.length;
+    window.setTimeout(() => typeWriter(ROLES[currentRole]), 500);
   }
-  
-  typeWriter(roles[0]);
+
+  typeWriter(ROLES[0]);
 }
 
-/* ─── ACTIVE NAV LINK ON SCROLL ──────────────────────────── */
-const sectionEls = document.querySelectorAll('section[id]');
-const navLinkEls = document.querySelectorAll('.nav-list a');
+/* ─── THEME TOGGLE ────────────────────────────────────────── */
+function getThemeIcon(theme) {
+  return theme === 'dark' ? '☀️' : '🌙';
+}
 
-const activeObserver = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if (en.isIntersecting) {
-      navLinkEls.forEach(a => {
-        a.removeAttribute('aria-current');
-        if (a.getAttribute('href') === '#' + en.target.id) {
-          a.setAttribute('aria-current', 'page');
-        }
-      });
-    }
-  });
-}, { rootMargin: '-50% 0px -50% 0px' });
+function updateThemeIcon(theme) {
+  const themeIcon = $('.theme-icon');
+  if (themeIcon) themeIcon.textContent = getThemeIcon(theme);
+}
 
-sectionEls.forEach(s => activeObserver.observe(s));
-
-/* ─── THEME TOGGLE ─────────────────────────────────────────── */
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  
-  const icon = document.querySelector('.theme-icon');
-  if (icon) {
-    icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-  }
+  const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+  document.documentElement.setAttribute('data-theme', nextTheme);
+  localStorage.setItem(THEME_KEY, nextTheme);
+  updateThemeIcon(nextTheme);
 }
 
-// Load saved theme
-(function loadTheme() {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    const icon = document.querySelector('.theme-icon');
-    if (icon) {
-      icon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-    }
-  }
-})();
+function loadTheme() {
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  if (!savedTheme) return;
 
-/* ─── INIT ─────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeIcon(savedTheme);
+}
+
+/* ─── INIT ────────────────────────────────────────────────── */
+function setCurrentYear() {
+  const yearElement = $('#ft-year');
+  if (yearElement) yearElement.textContent = new Date().getFullYear();
+}
+
+function initThemeToggle() {
+  loadTheme();
+  $('.theme-toggle')?.addEventListener('click', toggleTheme);
+}
+
+function init() {
+  initSplash();
+  initNavigation();
+  initScrollReveal();
+  initSkillsFilter();
+  initContactForm();
   initTechBackground();
   initRoleCarousel();
+  initThemeToggle();
+  setCurrentYear();
+}
 
-  // Dynamic copyright year
-  const yearEl = document.getElementById('ft-year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-  const themeToggle = document.querySelector('.theme-toggle');
-  const navToggle = document.querySelector('.nav-toggle');
-  const mobileNavLinks = document.querySelectorAll('#nav-mobile a');
-  const skillTabs = document.querySelectorAll('.skill-tab');
-  const contactForm = document.querySelector('.contact-form');
-  const splashSkip = document.querySelector('.splash-skip');
-
-  themeToggle?.addEventListener('click', toggleTheme);
-
-  navToggle?.addEventListener('click', () => {
-    toggleMobileNav(navToggle);
-  });
-
-  mobileNavLinks.forEach(link => {
-    link.addEventListener('click', closeMobileNav);
-  });
-
-  skillTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      showSkills(tab.dataset.category);
-    });
-  });
-
-  contactForm?.addEventListener('submit', handleContactForm);
-
-  // Splash skip button
-  splashSkip?.addEventListener('click', dismissSplash);
-});
+document.addEventListener('DOMContentLoaded', init);

@@ -497,6 +497,24 @@ button, input, textarea, select {
   border-color: #ff4757;
 }
 
+.btn-cv {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: #1e293b;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  transition: all 0.3s var(--ease);
+}
+.btn-cv:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.35);
+}
+
 /* Hero Image - Seamless blend with background */
 .hero-image-container {
   position: relative;
