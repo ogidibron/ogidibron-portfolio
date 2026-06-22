@@ -155,7 +155,7 @@ function initScrollReveal() {
     });
   }, { threshold: 0.1 });
 
-  $$('.skill-card, .project-card, .service-card, .blog-card, .timeline-item').forEach(el => {
+  $$('.skill-card, .project-card, .service-card, .blog-card, .timeline-item, .cert-card').forEach(el => {
     revealObserver.observe(el);
   });
 }
@@ -219,6 +219,7 @@ function handleContactForm(event) {
   const form = event.currentTarget;
   const submitButton = $('button[type="submit"]', form);
   const originalText = submitButton.textContent;
+  const formGroups = $$('.form-group', form);
 
   setFormStatus(form, '', '');
   const errors = validateContactForm(form);
@@ -232,12 +233,14 @@ function handleContactForm(event) {
   submitButton.disabled = true;
   submitButton.textContent = 'Sending...';
   setFormStatus(form, 'Sending your message...', 'loading');
+  formGroups.forEach(group => group.classList.add('loading'));
 
   window.setTimeout(() => {
     submitButton.disabled = false;
     submitButton.textContent = originalText;
     setFormStatus(form, 'Message sent successfully. Thank you for reaching out!', 'success');
     form.reset();
+    formGroups.forEach(group => group.classList.remove('loading'));
   }, CONTACT_SUCCESS_DELAY);
 }
 
@@ -255,12 +258,12 @@ function initTechBackground() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const gridColor = isDark ? 'rgba(99, 102, 241, 0.15)' : 'rgba(99, 102, 241, 0.1)';
   const dataColor = isDark ? 'rgba(16, 185, 129, 0.8)' : 'rgba(99, 102, 241, 0.7)';
-  const dataFlows = Array(30).fill().map(() => ({
+  const dataFlows = Array(15).fill().map(() => ({
     x: Math.random() * window.innerWidth,
     y: Math.random() * window.innerHeight,
-    speed: Math.random() * 1.5 + 0.5,
+    speed: Math.random() * 0.8 + 0.3,
     char: Math.random() > 0.5 ? '1' : '0',
-    size: Math.random() * 4 + 10,
+    size: Math.random() * 3 + 8,
   }));
 
   function resizeCanvas() {
@@ -391,6 +394,16 @@ function initThemeToggle() {
   $('.theme-toggle')?.addEventListener('click', toggleTheme);
 }
 
+function initBackToTop() {
+  const btn = $('#back-to-top');
+  if (!btn) return;
+
+  const toggle = () => btn.classList.toggle('visible', window.scrollY > 500);
+  window.addEventListener('scroll', toggle, { passive: true });
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  toggle();
+}
+
 function init() {
   initSplash();
   initNavigation();
@@ -400,6 +413,7 @@ function init() {
   initTechBackground();
   initRoleCarousel();
   initThemeToggle();
+  initBackToTop();
   setCurrentYear();
 }
 
